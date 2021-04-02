@@ -35,6 +35,8 @@ def main(host: str, token: str):
         for location in locations:
             inotify.add_path(Path(location.path))
 
+        print('added watchers')
+
         for event in inotify:
             if not event.mask & RESCAN_EVENTS:
                 continue
