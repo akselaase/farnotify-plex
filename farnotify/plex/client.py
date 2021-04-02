@@ -16,8 +16,8 @@ _T = TypeVar('_T')
 _R = TypeVar('_R')
 
 
-def lmap(func: Callable[[_T], _R], seq: Iterable[_T]) -> List[_R]:
-    return list(map(func, seq))
+def tmap(func: Callable[[_T], _R], seq: Iterable[_T]) -> List[_R]:
+    return tuple(map(func, seq))
 
 
 @dataclass(frozen=True)
@@ -46,7 +46,7 @@ class Library:
             int(tree.get('key')),
             tree.get('title'),
             tree.get('type'),
-            lmap(Location.from_xml, tree)
+            tmap(Location.from_xml, tree)
         )
 
 
@@ -81,7 +81,7 @@ class PlexClient:
 
     def get_libraries(self):
         xml = self._get('sections')
-        return lmap(Library.from_xml, xml)
+        return tmap(Library.from_xml, xml)
 
     def refresh_library(self, library: Library, path: str = None):
         self._get(f'sections/{library.key}/refresh', path=path)
