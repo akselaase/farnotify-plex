@@ -87,4 +87,5 @@ class PlexClient:
         return tmap(Library.from_xml, xml)
 
     def refresh_library(self, library: Library, path: str = None):
+        print(f'refreshing library ({library.key} {library.title}) with relpath {path}')
         self._get(f'sections/{library.key}/refresh', xml=False, path=path)
