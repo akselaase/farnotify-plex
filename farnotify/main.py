@@ -41,9 +41,13 @@ def main(host: str, token: str):
             if not event.mask & RESCAN_EVENTS:
                 continue
 
+            path = event.path
+            if event.name:
+                path /= event.name
+
             matching_libs = set()
             for location, libs in locations.items():
-                if event.path.is_relative_to(location.path):
+                if path.is_relative_to(location.path):
                     matching_libs.update(libs)
 
             if not matching_libs:
@@ -51,4 +55,4 @@ def main(host: str, token: str):
                 continue
 
             for lib in matching_libs:
-                client.refresh_library(lib, event.path)
+                client.refresh_library(lib, path)
