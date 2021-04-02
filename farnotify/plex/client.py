@@ -56,7 +56,7 @@ class PlexClient:
         self._token = ''
         self._authorizer = authorizer
 
-    def _get(self, url, xml=False, **kwargs):
+    def _get(self, url, xml=True, **kwargs):
         params = {
             **kwargs,
             'X-Plex-Token': self._token
