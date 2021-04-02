@@ -56,25 +56,28 @@ class PlexClient:
         self._token = ''
         self._authorizer = authorizer
 
-    def _get(self, url, **kwargs):
+    def _get(self, url, xml=False, **kwargs):
         params = {
             **kwargs,
             'X-Plex-Token': self._token
         }
 
-        r = requests.get(f'{self._base}/library/{url}', params=params, verify=False)
+        req = requests.get(f'{self._base}/library/{url}', params=params, verify=False)
 
-        if r.status_code == requests.codes['unauthorized']:
+        if req.status_code == requests.codes['unauthorized']:
             if not self._authorizer:
                 raise PlexUnauthorizedError
             else:
                 self.set_token(self._authorizer())
                 return self._get(url, **kwargs)
 
-        if r.status_code != 200:
-            raise PlexError(f'Unexpected status code {r.status_code}')
+        if req.status_code != 200:
+            raise PlexError(f'Unexpected status code {req.status_code}')
 
-        return ET.fromstring(r.text)
+        if xml:
+            return ET.fromstring(req.text)
+        else:
+            return req
 
     def set_token(self, token: str):
         self._token = token
@@ -84,4 +87,4 @@ class PlexClient:
         return tmap(Library.from_xml, xml)
 
     def refresh_library(self, library: Library, path: str = None):
-        self._get(f'sections/{library.key}/refresh', path=path)
+        self._get(f'sections/{library.key}/refresh', xml=False, path=path)
