@@ -1,7 +1,10 @@
 import xml.etree.ElementTree as ET
 import requests
+import urllib3
 from dataclasses import dataclass
 from typing import Callable, Iterable, List, TypeVar
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class PlexError(Exception):
