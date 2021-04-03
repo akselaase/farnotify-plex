@@ -6,7 +6,7 @@ from farnotify.plex.client import PlexClient
 from inotify_simple import flags
 from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 
-RESCAN_EVENTS = flags.CREATE | flags.CLOSE_WRITE | flags.DELETE | flags.DELETE_SELF | flags.MODIFY | flags.MOVED_FROM | flags.MOVED_TO
+RESCAN_EVENTS = flags.CREATE | flags.CLOSE_WRITE | flags.DELETE | flags.MOVED_FROM | flags.MOVED_TO
 
 
 def parse_path(path: str) -> PurePath:
