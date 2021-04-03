@@ -67,16 +67,22 @@ class INotify(inotify_simple.INotify):
             for ev in events:
                 path = self.wd_path.get(ev.wd)
 
-                # Add watchers for newly created subdirs
-                if ev.mask & flags.ISDIR and \
-                        ev.mask & flags.CREATE:
+                is_dir = ev.mask & flags.ISDIR
+
+                # Add watchers for moved or newly created subdirs
+                if is_dir and ev.mask & (flags.CREATE | flags.MOVED_TO):
+                    subdir = path / ev.name
                     try:
-                        self._add_dir(path / ev.name)
+                        self._add_dir(subdir)
                     except OSError as ex:
                         if ex.errno != ENOTDIR:
                             raise
 
-                # Forget removed mappings
+                # Remove watchers for moved subdirs
+                if ev.mask & flags.MOVE_SELF and path.is_dir():
+                    self.rm_watch(ev.wd)
+
+                    # Forget removed mappings
                 if ev.mask & flags.IGNORED:
                     del self.wd_path[ev.wd]
 
